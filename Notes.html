@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Notes</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+  </head>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: rgb(220, 255, 220);
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .heading {
+      height: auto;
+      width: 100vw;
+      background-color: rgb(208, 177, 0);
+      color: rgb(9, 8, 8);
+      padding: 10px;
+    }
+
+    #add {
+      background-color: rgb(208, 177, 0);
+      position: absolute;
+      padding: 8px;
+      cursor: pointer;
+      border-radius: 4px;
+      border-width: 1px;
+      top: 60px;
+      /* float: right; */
+      right: 10px;
+      transition: 0.2s ease-in-out;
+    }
+
+    .button {
+      display: block;
+      height: 30px;
+    }
+
+    #add:hover {
+      background-color: rgba(250, 229, 108, 0.997);
+    }
+
+    .container {
+      display: inline-block;
+      margin: 15px 0px 15px 25px;
+    }
+
+    .box {
+      height: 200px;
+      width: 245px;
+      overflow-y: scroll;
+      background-color: azure;
+      color: black;
+      padding: 10px 4px;
+      position: relative;
+    }
+
+    .btn {
+    float: right;
+    top: 0px;
+    position: sticky;
+  z-index: 100;}
+
+    .btn button {
+      outline: none;
+      border: 0px;
+      background-color: transparent;
+      cursor: pointer;
+    }
+    .fa-file-pen {
+      background-color: rgb(8, 184, 102);
+      border-radius: 20%;
+      font-weight: bolder;
+      font-size: 6pxpx;
+      padding: 6px 3px;
+      color: white;
+      /* margin-right: 16px; */
+    }
+    .fa-floppy-disk{
+      background-color: rgba(9, 16, 235, 0.842);
+      border-radius: 20%;
+      font-weight: bolder;
+      font-size: 6pxpx;
+      padding: 6px 3px;
+      color: white;
+    }
+    .fa-trash-can {
+      background-color: rgb(243, 35, 16);
+      border-radius: 20%;
+      font-weight: bolder;
+      padding: 6px 3px;
+      color: white;
+      /* margin-right: 12px; */
+    }
+
+    .fa-file-pen:hover {
+      background-color: azure;
+      color: rgb(8, 184, 102);
+    }
+    .fa-floppy-disk:hover {
+      background-color: azure;
+      color: rgba(9, 16, 235, 0.842);
+    }
+
+    .fa-trash-can:hover {
+      background-color: azure;
+      color: rgb(243, 35, 16);
+    }
+
+    .text {
+      background-color: transparent;
+      outline: none;
+      border-width: 0px;
+      min-height: 700px;
+      margin-top: 14px;
+      width: 213px;
+      overflow: hidden;
+    }
+
+    .note {
+      margin-top: 20px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 500px) {
+      .heading {
+        padding: 12px 0px;
+        text-align: center;
+      }
+      #add {
+        padding: 6px;
+        top: 65px;
+      }
+      .container {
+        margin: 15px 15px 15px 30px;
+      }
+      .box {
+        height: 150px;
+        width: 160px;
+        padding: 10px 8px;
+      }
+    }
+    @media (min-width: 500px) {
+      .fa-2xs {
+        font-size: 16px;
+      }
+      .fa-trash-can,
+      .fa-floppy-disk,
+      .fa-file-pen {
+        padding: 10px 4px;
+      }
+
+    }
+  </style>
+
+  <body>
+    <div class="heading">
+      <h2><i class="fa fa-light fa-pen-to-square"></i> My Notes 🗒️</h2>
+    </div>
+    <div class="button">
+      <button id="add"><i class="fa fa-plus"></i> Add Note</button>
+    </div>
+    <div class="btn"></div>
+
+    <script>
+      const addnote = document.getElementById("add");
+
+      //    local storage to store data
+      const updateLSdata = () => {
+        const textAreaData = document.querySelectorAll("textarea");
+        const notes = [];
+        // console.log(textAreaData);
+        textAreaData.forEach((note) => {
+          return notes.push(note.value);
+        });
+        // console.log(notes);
+        localStorage.setItem("notes", JSON.stringify(notes));
+      };
+
+      const addnewnote = (text = "") => {
+        const note = document.createElement("div");
+        note.classList.add("container");
+        const htmldata = `
+    <div class="box 1">
+    <div class="btn">
+        <button id="edit"><i class="fa fa-light fa-file-pen fa-2xs"></i></button>  
+        <button id="trash"><i class="fa fa-light fa-trash-can fa-2xs"></i></button>
+        <button id="save"><i class="fa-sharp fa-solid fa-floppy-disk fa-2xs"></i></button>  
+        </div>
+        <div class="note ${text ? " " : "hidden"}"></div>
+        <textarea class="text ${text ? "hidden" : ""}">
+        </textarea>
+        </div> `;
+        note.insertAdjacentHTML("afterbegin", htmldata);
+        // console.log(note);
+
+        // getting reference
+
+        const editbut = note.querySelector("#edit");
+        const savebtn = note.querySelector("#save");
+        const delbut = note.querySelector("#trash");
+        const maindiv = note.querySelector(".note");
+        const textArea = note.querySelector("textarea");
+
+        // now we will add data (note) inside our website page
+        document.body.appendChild(note);
+        
+        // toggle using edit button
+        textArea.value = text;
+        maindiv.innerHTML = text;
+
+        editbut.addEventListener("click", () => {
+          textArea.classList.replace("hidden", "text");
+          maindiv.classList.replace("note", "hidden");
+        });
+
+        savebtn.addEventListener("click", () => {
+          textArea.classList.replace("text", "hidden");
+          maindiv.classList.replace("hidden", "note");
+          updateLSdata();
+        });
+
+        textArea.addEventListener("change", (event) => {
+          const value = event.target.value;
+          // console.log(value);
+          maindiv.innerHTML = value;
+          // maindiv.classList.add("hidden");
+          updateLSdata();
+
+        });
+
+        // deleting note box
+
+        delbut.addEventListener("click", () => {
+         
+            note.remove();
+            updateLSdata();
+          
+        });
+      };
+      // getting data back from local storage
+      const notes = JSON.parse(localStorage.getItem("notes"));
+
+      if (notes) {
+        notes.forEach((note) => addnewnote(note));
+      }
+
+      addnote.addEventListener("click", () => addnewnote());
+    </script>
+  </body>
+</html>
